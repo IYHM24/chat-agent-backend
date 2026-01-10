@@ -64,7 +64,7 @@ Backend/
 
 5. **Crear la base de datos MySQL:**
    ```sql
-   CREATE DATABASE Ancom_db;
+   CREATE DATABASE nycolt_db;
    ```
 
 ## 📦 Scripts Disponibles
@@ -91,7 +91,7 @@ NODE_ENV=development
 # Database
 DB_HOST=localhost
 DB_PORT=3306
-DB_NAME=Ancom_db
+DB_NAME=nycolt_db
 DB_USER=root
 DB_PASSWORD=tu_password
 DB_DIALECT=mysql
@@ -303,7 +303,7 @@ ISC
 
 ---
 
-**Desarrollado por Ancom** 🚀
+**Desarrollado por Nycolt** 🚀
 
 Para más información, consulta:
 - [Documentación de Autenticación](Docs/AUTH_ENDPOINTS.md)
