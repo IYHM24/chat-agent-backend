@@ -64,7 +64,7 @@ Backend/
 
 5. **Crear la base de datos MySQL:**
    ```sql
-   CREATE DATABASE nycolt_db;
+   CREATE DATABASE chat_db;
    ```
 
 ## 📦 Scripts Disponibles
@@ -286,7 +286,7 @@ Similar a Product, para datos temporales de importación.
 
 ## 📦 Dependencias Principales
 
-- **express** - Framework web
+- **express** - Libreria web
 - **sequelize** - ORM para MySQL
 - **mysql2** - Driver de MySQL
 - **bcryptjs** - Hashing de contraseñas (Node.js)
