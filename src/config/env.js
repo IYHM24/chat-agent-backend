@@ -12,8 +12,8 @@ export default {
   database: {
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 3306,
-    name: process.env.DB_NAME || 'nycolt_db',
-    user: process.env.DB_USER || 'root',
+    name: process.env.DB_NAME || 'chat_db',
+    user: process.env.DB_USER || 'chat_user',
     password: process.env.DB_PASSWORD || '',
     dialect: process.env.DB_DIALECT || 'mysql',
   },
