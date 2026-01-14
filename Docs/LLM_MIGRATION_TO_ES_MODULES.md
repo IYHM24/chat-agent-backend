@@ -1,3 +1,4 @@
+````markdown
 # Migración a ES Modules
 
 El módulo LLM ha sido actualizado para usar ES Modules (import/export) en lugar de CommonJS (require/module.exports).
@@ -71,13 +72,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
 ## 📝 Archivos modificados
 
-- ✅ `src/llm/config/llm.config.js`
-- ✅ `src/llm/services/ollama.service.js`
+- ✅ `src/config/llm.config.js` (movido desde `src/llm/config/`)
+- ✅ `src/services/ollama.service.js` (movido desde `src/llm/services/`)
 - ✅ `src/llm/validators/intent.validator.js`
 - ✅ `src/llm/index.js`
 - ✅ `src/llm/examples/intent-extraction.example.js`
-- ✅ `src/llm/README.md` (ejemplos actualizados)
-- ✅ `src/llm/QUICKSTART.md` (ejemplos actualizados)
+- ✅ `Docs/LLM_README.md` (ejemplos actualizados)
+- ✅ `Docs/LLM_QUICKSTART.md` (ejemplos actualizados)
 
 ## 🔧 Prerequisitos
 
@@ -109,7 +110,7 @@ const intent = await extractIntent('pregunta del usuario');
 
 ### Importar servicios individuales
 ```javascript
-import ollamaService from './src/llm/services/ollama.service.js';
+import ollamaService from './src/services/ollama.service.js';
 import intentValidator from './src/llm/validators/intent.validator.js';
 
 const rawIntent = await ollamaService.extractIntent('pregunta');
@@ -141,3 +142,5 @@ node src/llm/examples/intent-extraction.example.js
 
 - [Node.js ES Modules](https://nodejs.org/api/esm.html)
 - [MDN: JavaScript modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
+
+````

@@ -1,5 +1,5 @@
 /**
- * Rutas de autenticación
+ * Rutas de Datasheets
  */
 
 import express from 'express';

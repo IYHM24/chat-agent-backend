@@ -10,7 +10,7 @@
  * Ejecutar con: node src/llm/examples/intent-extraction.example.js
  */
 
-import ollamaService from '../services/ollama.service.js';
+import ollamaService from '../../services/ollama.service.js';
 import intentValidator from '../validators/intent.validator.js';
 
 /**

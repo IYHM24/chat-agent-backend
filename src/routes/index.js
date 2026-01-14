@@ -11,12 +11,14 @@ import authRoutes from './auth.routes.js';
 import userRoutes from './user.routes.js';
 import productRoutes from './product.routes.js';
 import datasheetRoutes from './datasheet.routes.js';
+import ollamaRoutes from './ollama.routes.js';
 
 // Registrar rutas
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/product', productRoutes);
 router.use('/datasheet', datasheetRoutes);
+router.use('/agent', ollamaRoutes);
 
 // Ruta de ejemplo
 //router.get('/', (req, res) => {

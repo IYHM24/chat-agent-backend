@@ -2,7 +2,7 @@ import Ajv from 'ajv';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import config from '../config/llm.config.js';
+import config from '../../config/llm.config.js';
 
 /**
  * Validador de intenciones usando AJV (Another JSON Validator)

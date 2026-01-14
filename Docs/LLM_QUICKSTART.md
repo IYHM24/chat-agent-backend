@@ -1,3 +1,4 @@
+````markdown
 # 🚀 Guía Rápida - Módulo LLM
 
 ## Instalación y Setup
@@ -99,7 +100,7 @@ async function handleUserQuestion(req, res) {
 
 ### Respuestas inválidas del modelo
 - ✓ El módulo reintenta automáticamente 3 veces
-- ✓ Ajusta la temperatura en `src/llm/config/llm.config.js`
+- ✓ Ajusta la temperatura en `src/config/llm.config.js`
 
 ### Timeout
 - ✓ Aumenta `OLLAMA_TIMEOUT` en `.env`
@@ -148,3 +149,5 @@ El módulo NO:
 - ❌ No formatea respuestas para el usuario
 
 Solo convierte pregunta → intención estructurada y validada.
+
+````

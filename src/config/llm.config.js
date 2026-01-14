@@ -43,13 +43,13 @@ export default {
   // Rutas de archivos del módulo LLM
   paths: {
     // Directorio base del módulo LLM
-    baseDir: join(__dirname, '..'),
+    baseDir: join(__dirname, '..', 'llm'),
     
     // Directorio de prompts
-    promptsDir: join(__dirname, '..', 'prompts'),
+    promptsDir: join(__dirname, '..', 'llm', 'prompts'),
     
     // Directorio de schemas
-    schemasDir: join(__dirname, '..', 'schemas'),
+    schemasDir: join(__dirname, '..', 'llm', 'schemas'),
     
     // Versión actual del prompt de extracción de intenciones
     intentPromptVersion: 'v1'

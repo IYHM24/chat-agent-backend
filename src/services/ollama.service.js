@@ -1,6 +1,5 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import config from '../config/llm.config.js';
 
 /**
@@ -92,6 +91,55 @@ class OllamaService {
 
       const data = await response.json();
       return data.response;
+
+    } catch (error) {
+      clearTimeout(timeoutId);
+      
+      if (error.name === 'AbortError') {
+        throw new Error(`Timeout: El modelo no respondió en ${this.timeout}ms`);
+      }
+      
+      throw new Error(`Error comunicándose con Ollama: ${error.message}`);
+    }
+  }
+
+  /**
+   * Genera texto usando el modelo LLM - version message
+   * 
+   * @param {Array} messages - Mensajes completos a enviar
+   * @param {Object} options - Opciones adicionales para la generación
+   * @returns {Promise<string>} - Respuesta del modelo
+   */
+  async generateMessages(messages, options = {}) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+    try {
+      const response = await fetch(`${this.baseUrl}/api/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: this.model,
+          messages: messages,
+          stream: false, // Deshabilitamos streaming para obtener respuesta completa
+          options: {
+            ...this.options,
+            ...options
+          }
+        }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.message; // En /api/chat la respuesta está en message.content
 
     } catch (error) {
       clearTimeout(timeoutId);

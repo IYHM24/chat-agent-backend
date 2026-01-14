@@ -4,9 +4,9 @@
  * Exporta las funcionalidades principales para facilitar las importaciones
  */
 
-import ollamaService from './services/ollama.service.js';
+import ollamaService from '../services/ollama.service.js';
 import intentValidator from './validators/intent.validator.js';
-import config from './config/llm.config.js';
+import config from '../config/llm.config.js';
 
 /**
  * Función principal para procesar preguntas de usuarios

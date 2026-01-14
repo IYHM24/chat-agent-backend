@@ -1,3 +1,4 @@
+````markdown
 # Módulo LLM - Extracción de Intenciones
 
 Módulo para integración con Ollama (Phi-3) que convierte preguntas de usuarios en intenciones estructuradas y validadas.
@@ -5,19 +6,21 @@ Módulo para integración con Ollama (Phi-3) que convierte preguntas de usuarios
 ## 📁 Estructura
 
 ```
-src/llm/
+src/
 ├── config/
-│   └── llm.config.js              # Configuración centralizada
-├── prompts/
-│   └── intent-extraction.v1.prompt.txt  # Prompt versionado
-├── schemas/
-│   └── intent.schema.json         # JSON Schema de validación
+│   └── llm.config.js              # Configuración centralizada (movido aquí)
 ├── services/
-│   └── ollama.service.js          # Servicio de comunicación con Ollama
-├── validators/
-│   └── intent.validator.js        # Validador usando AJV
-└── examples/
-    └── intent-extraction.example.js  # Ejemplo completo de uso
+│   └── ollama.service.js          # Servicio de comunicación con Ollama (movido aquí)
+└── llm/
+    ├── prompts/
+    │   └── intent-extraction.v1.prompt.txt  # Prompt versionado
+    ├── schemas/
+    │   └── intent.schema.json     # JSON Schema de validación
+    ├── validators/
+    │   └── intent.validator.js    # Validador usando AJV
+    ├── examples/
+    │   └── intent-extraction.example.js  # Ejemplo completo de uso
+    └── index.js                   # Punto de entrada
 ```
 
 ## 🎯 Contrato de Intención
@@ -67,7 +70,7 @@ console.log(intent);
 ### Avanzado
 
 ```javascript
-import ollamaService from './llm/services/ollama.service.js';
+import ollamaService from './services/ollama.service.js';
 import intentValidator from './llm/validators/intent.validator.js';
 
 async function processQuestion(userQuestion) {
@@ -103,10 +106,10 @@ OLLAMA_TIMEOUT=30000
 
 ### Cambiar modelo LLM
 
-Editar [src/llm/config/llm.config.js](src/llm/config/llm.config.js):
+Editar [src/config/llm.config.js](src/config/llm.config.js):
 
 ```javascript
-module.exports = {
+export default {
   ollama: {
     model: 'llama2',  // Cambiar aquí
     // ... resto de configuración
@@ -156,27 +159,27 @@ Ejecutará 4 ejemplos:
 
 ### Separación de responsabilidades
 
-1. **Config** ([llm.config.js](src/llm/config/llm.config.js))
+1. **Config** ([llm.config.js](../src/config/llm.config.js))
    - Configuración centralizada
    - Fácil cambio de modelo/proveedor
 
-2. **Prompts** ([*.prompt.txt](src/llm/prompts/))
+2. **Prompts** ([*.prompt.txt](../src/llm/prompts/))
    - Versionados en archivos separados
    - No hardcodeados en el código
    - Fáciles de iterar y mejorar
 
-3. **Service** ([ollama.service.js](src/llm/services/ollama.service.js))
+3. **Service** ([ollama.service.js](../src/services/ollama.service.js))
    - Comunicación con Ollama
    - Manejo de errores y reintentos
    - Parseo de JSON
    - Cache de prompts
 
-4. **Validator** ([intent.validator.js](src/llm/validators/intent.validator.js))
+4. **Validator** ([intent.validator.js](../src/llm/validators/intent.validator.js))
    - Validación estricta con AJV
    - Rechazo de respuestas inválidas
    - Mensajes de error claros
 
-5. **Schema** ([intent.schema.json](src/llm/schemas/intent.schema.json))
+5. **Schema** ([intent.schema.json](../src/llm/schemas/intent.schema.json))
    - Contrato formal de la intención
    - Validación automática
    - Documentación implícita
@@ -195,7 +198,7 @@ Ejecutará 4 ejemplos:
 
 ### Agregar nuevos campos
 
-1. Editar [intent.schema.json](src/llm/schemas/intent.schema.json):
+1. Editar [intent.schema.json](../src/llm/schemas/intent.schema.json):
 ```json
 "fields": {
   "items": {
@@ -204,7 +207,7 @@ Ejecutará 4 ejemplos:
 }
 ```
 
-2. Actualizar [intent-extraction.v1.prompt.txt](src/llm/prompts/intent-extraction.v1.prompt.txt) con ejemplos
+2. Actualizar [intent-extraction.v1.prompt.txt](../src/llm/prompts/intent-extraction.v1.prompt.txt) con ejemplos
 
 3. Recargar schema:
 ```javascript
@@ -264,3 +267,5 @@ El módulo rechaza:
 - ✅ No se permiten campos adicionales (additionalProperties: false)
 - ✅ Enum limita valores posibles
 - ✅ Sin inyección de prompts (prompt separado del input)
+
+````
