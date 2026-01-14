@@ -21,6 +21,9 @@ const startServer = async () => {
     if (config.nodeEnv === 'development') {
       await syncDatabase({ alter: false, force: false });
     }
+
+    //Pre calentar LLMs u otros servicios si es necesario
+    // await prewarmServices();
     
     // Iniciar el servidor
     const server = app.listen(PORT, () => {
