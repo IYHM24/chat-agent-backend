@@ -22,7 +22,7 @@ export default {
     model: process.env.OLLAMA_MODEL || 'phi3',
     
     // Timeout para las peticiones (en milisegundos)
-    timeout: parseInt(process.env.OLLAMA_TIMEOUT) || 60000,
+    timeout: parseInt(process.env.OLLAMA_TIMEOUT) || 3600000,
     
     // Parámetros de generación
     options: {
