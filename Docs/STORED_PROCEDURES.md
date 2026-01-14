@@ -268,7 +268,78 @@ SHOW CREATE PROCEDURE GetUserById;
 DROP PROCEDURE IF EXISTS GetUserById;
 ```
 
-## 📖 Documentación Adicional
+## � Stored Procedures del Proyecto
+
+### DebbugDatasheets
+
+**Propósito:** Sincronizar datos desde la tabla temporal `DatasheetTemporal` a la tabla principal `Datasheet`.
+
+**Ubicación:** `Docs/sql/DebbugDatasheets.sql`
+
+**Funcionalidad:**
+1. Actualiza datasheets existentes (por ID)
+2. Inserta nuevas datasheets que no existen en la tabla principal
+3. Limpia la tabla temporal después de la sincronización
+4. Manejo automático de transacciones (COMMIT o ROLLBACK)
+
+**Uso en Node.js:**
+
+```javascript
+import TransactSQL from './services/TransactSQL.js';
+
+// Ejecutar sincronización
+const result = await TransactSQL.singleQuery('DebbugDatasheets');
+
+console.log(result);
+// {
+//   status: 'success',
+//   inserted: 10,    // Nuevas datasheets insertadas
+//   updated: 5,      // Datasheets actualizadas
+//   deleted: 0,      // Registros temporales eliminados
+//   total_affected: 15
+// }
+```
+
+**Uso en el servicio:**
+
+```javascript
+import DatasheetService from './services/Datasheet.service.js';
+
+// 1. Cargar datos en tabla temporal
+await DatasheetService.bulkCreateDatasheets(datasheets);
+
+// 2. Sincronizar a tabla principal
+const result = await DatasheetService.syncDatasheetsFromTemp();
+```
+
+**Crear el SP en MySQL:**
+
+```bash
+# Opción 1: Desde MySQL Workbench
+# Copiar y pegar el contenido de Docs/sql/DebbugDatasheets.sql
+
+# Opción 2: Desde línea de comandos
+mysql -u root -p nycolt_db < Docs/sql/DebbugDatasheets.sql
+```
+
+**Verificar el SP:**
+
+```sql
+-- Listar stored procedures
+SHOW PROCEDURE STATUS WHERE Db = 'nycolt_db';
+
+-- Ver código del SP
+SHOW CREATE PROCEDURE DebbugDatasheets;
+```
+
+**Características:**
+- ✅ Transaccional (ROLLBACK automático en caso de error)
+- ✅ Usa COALESCE para actualizar solo valores no nulos
+- ✅ Retorna estadísticas de la operación
+- ✅ Limpieza automática de tabla temporal
+- ✅ Manejo de errores con handler
+
+## �📖 Documentación Adicional
 
 - [Sequelize Raw Queries](https://sequelize.org/docs/v6/core-concepts/raw-queries/)
 - [MySQL Stored Procedures](https://dev.mysql.com/doc/refman/8.0/en/stored-programs.html)

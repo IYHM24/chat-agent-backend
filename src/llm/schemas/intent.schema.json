@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Intent Extraction Schema",
+  "description": "Schema para validar las intenciones extraídas de consultas de usuarios",
+  "type": "object",
+  "properties": {
+    "entity": {
+      "type": "string",
+      "enum": ["product"],
+      "description": "La entidad sobre la que el usuario consulta (solo product es válido)"
+    },
+    "filters": {
+      "type": "object",
+      "properties": {
+        "brand": {
+          "type": ["string", "null"],
+          "description": "Marca del producto buscado"
+        },
+        "model": {
+          "type": ["string", "null"],
+          "description": "Modelo del producto buscado"
+        }
+      },
+      "required": ["brand", "model"],
+      "additionalProperties": false,
+      "description": "Filtros para buscar el producto"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ports",
+          "price",
+          "stock",
+          "description",
+          "brand",
+          "model",
+          "name",
+          "features"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Campos que el usuario quiere conocer del producto"
+    }
+  },
+  "required": ["entity", "filters", "fields"],
+  "additionalProperties": false
+}

@@ -10,11 +10,13 @@ const router = express.Router();
 import authRoutes from './auth.routes.js';
 import userRoutes from './user.routes.js';
 import productRoutes from './product.routes.js';
+import datasheetRoutes from './datasheet.routes.js';
 
 // Registrar rutas
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/product', productRoutes);
+router.use('/datasheet', datasheetRoutes);
 
 // Ruta de ejemplo
 //router.get('/', (req, res) => {

@@ -38,7 +38,7 @@ const User = sequelize.define('User', {
   },
 }, {
   tableName: 'Usuario',
-  timestamps: true,
+  timestamps: false,
   defaultScope: {
     attributes: { exclude: ['Credencial'] },
   },
