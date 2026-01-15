@@ -11,23 +11,36 @@ class TransactSQL {
   /**
    * Ejecutar SP que retorna un único registro
    * @param {string} procedure - Nombre del stored procedure
-   * @param {object} parameters - Parámetros del SP
+   * @param {object|array} parameters - Parámetros del SP (objeto o array)
    * @returns {Promise<object|null>}
    */
   async singleQuery(procedure, parameters = {}) {
     try {
-      const placeholders = Object.keys(parameters)
-        .map(key => `:${key}`)
-        .join(', ');
-      
-      const query = placeholders 
-        ? `CALL ${procedure}(${placeholders})`
-        : `CALL ${procedure}()`;
+      let query;
+      let replacements;
 
-      logger.debug(`Ejecutando query: ${query}`, parameters);
+      if (Array.isArray(parameters)) {
+        // Si es array, usar placeholders posicionales (?)
+        const placeholders = parameters.map(() => '?').join(', ');
+        query = placeholders 
+          ? `CALL ${procedure}(${placeholders})`
+          : `CALL ${procedure}()`;
+        replacements = parameters;
+      } else {
+        // Si es objeto, usar placeholders con nombre (:key)
+        const placeholders = Object.keys(parameters)
+          .map(key => `:${key}`)
+          .join(', ');
+        query = placeholders 
+          ? `CALL ${procedure}(${placeholders})`
+          : `CALL ${procedure}()`;
+        replacements = parameters;
+      }
+
+      logger.debug(`Ejecutando query: ${query}`, replacements);
 
       const [results] = await sequelize.query(query, {
-        replacements: parameters,
+        replacements: replacements,
         type: QueryTypes.SELECT,
         raw: true
       });
@@ -64,26 +77,49 @@ class TransactSQL {
   /**
    * Ejecutar SP que retorna múltiples registros
    * @param {string} procedure - Nombre del stored procedure
-   * @param {object} parameters - Parámetros del SP
-   * @returns {Promise<Array>}
+   * @param {object|array} parameters - Parámetros del SP (objeto o array)
+   * @returns {Promise<Array>} - Retorna array de resultados
    */
   async listQuery(procedure, parameters = {}) {
     try {
-      const placeholders = Object.keys(parameters)
-        .map(key => `:${key}`)
-        .join(', ');
-      
-      const query = placeholders 
-        ? `CALL ${procedure}(${placeholders})`
-        : `CALL ${procedure}()`;
+      let query;
+      let replacements;
 
-      const [results] = await sequelize.query(query, {
-        replacements: parameters,
-        type: QueryTypes.SELECT,
+      if (Array.isArray(parameters)) {
+        // Si es array, usar placeholders posicionales (?)
+        const placeholders = parameters.map(() => '?').join(', ');
+        query = placeholders 
+          ? `CALL ${procedure}(${placeholders})`
+          : `CALL ${procedure}()`;
+        replacements = parameters;
+      } else {
+        // Si es objeto, usar placeholders con nombre (:key)
+        const placeholders = Object.keys(parameters)
+          .map(key => `:${key}`)
+          .join(', ');
+        query = placeholders 
+          ? `CALL ${procedure}(${placeholders})`
+          : `CALL ${procedure}()`;
+        replacements = parameters;
+      }
+
+      // Ejecutar sin especificar type para obtener todos los resultados
+      const results = await sequelize.query(query, {
+        replacements: replacements,
         raw: true
       });
 
-      return results || [];
+      // results es un array [data, metadata]
+      // data puede ser un array de objetos o un objeto indexado
+      const data = results[0];
+      
+      // Si data es un objeto con claves numéricas, convertirlo a array
+      if (data && typeof data === 'object' && !Array.isArray(data)) {
+        return Object.values(data);
+      }
+      
+      // Si ya es un array, devolverlo
+      return Array.isArray(data) ? data : [];
     } catch (error) {
       logger.error(`Error en listQuery - ${procedure}:`, error);
       throw error;
@@ -93,21 +129,34 @@ class TransactSQL {
   /**
    * Ejecutar SP sin retornar resultados (INSERT/UPDATE/DELETE)
    * @param {string} procedure - Nombre del stored procedure
-   * @param {object} parameters - Parámetros del SP
+   * @param {object|array} parameters - Parámetros del SP (objeto o array)
    * @returns {Promise<void>}
    */
   async executeQuery(procedure, parameters = {}) {
     try {
-      const placeholders = Object.keys(parameters)
-        .map(key => `:${key}`)
-        .join(', ');
-      
-      const query = placeholders 
-        ? `CALL ${procedure}(${placeholders})`
-        : `CALL ${procedure}()`;
+      let query;
+      let replacements;
+
+      if (Array.isArray(parameters)) {
+        // Si es array, usar placeholders posicionales (?)
+        const placeholders = parameters.map(() => '?').join(', ');
+        query = placeholders 
+          ? `CALL ${procedure}(${placeholders})`
+          : `CALL ${procedure}()`;
+        replacements = parameters;
+      } else {
+        // Si es objeto, usar placeholders con nombre (:key)
+        const placeholders = Object.keys(parameters)
+          .map(key => `:${key}`)
+          .join(', ');
+        query = placeholders 
+          ? `CALL ${procedure}(${placeholders})`
+          : `CALL ${procedure}()`;
+        replacements = parameters;
+      }
 
       await sequelize.query(query, {
-        replacements: parameters,
+        replacements: replacements,
         type: QueryTypes.RAW
       });
     } catch (error) {

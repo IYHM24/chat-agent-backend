@@ -36,6 +36,8 @@ BEGIN
     UPDATE Datasheet d
     INNER JOIN DatasheetTemporal dt ON d.id = dt.id
     SET 
+        d.UNIT = COALESCE(dt.UNIT, d.UNIT),
+        d.SKU = COALESCE(dt.SKU, d.SKU),
         d.Firewall_Throughput_UDP = COALESCE(dt.Firewall_Throughput_UDP, d.Firewall_Throughput_UDP),
         d.IPSec_VPN_Throughput = COALESCE(dt.IPSec_VPN_Throughput, d.IPSec_VPN_Throughput),
         d.IPS_Throughput_Enterprise_Mix = COALESCE(dt.IPS_Throughput_Enterprise_Mix, d.IPS_Throughput_Enterprise_Mix),
@@ -70,6 +72,8 @@ BEGIN
     -- ===========================================================
     INSERT INTO Datasheet (
         id,
+        UNIT,
+        SKU,
         Firewall_Throughput_UDP,
         IPSec_VPN_Throughput,
         IPS_Throughput_Enterprise_Mix,
@@ -99,6 +103,8 @@ BEGIN
     )
     SELECT 
         dt.id,
+        dt.UNIT,
+        dt.SKU,
         dt.Firewall_Throughput_UDP,
         dt.IPSec_VPN_Throughput,
         dt.IPS_Throughput_Enterprise_Mix,

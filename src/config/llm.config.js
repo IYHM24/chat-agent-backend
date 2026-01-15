@@ -32,11 +32,11 @@ export default {
       // Top-p: muestreo de núcleo
       top_p: 0.9,
       
-      // Número máximo de tokens a generar
-      num_predict: 500,
+      // Número máximo de tokens a generar (reducido para respuestas más rápidas)
+      num_predict: 150, // Reducido de 500 a 150 para JSON estructurado
       
       // Stop tokens: detener generación al encontrar estos tokens
-      stop: ['\n\n', '```']
+      stop: ['\n\n', '```', '}']  // Agregado } para detener después del JSON
     }
   },
 

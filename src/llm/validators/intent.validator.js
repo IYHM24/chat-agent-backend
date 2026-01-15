@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import config from '../../config/llm.config.js';
+import { DatasheetColumns } from '../../config/columnasAgente.js';
 
 /**
  * Validador de intenciones usando AJV (Another JSON Validator)
@@ -60,24 +61,40 @@ class IntentValidator {
    * @returns {Object} - { valid: boolean, errors: Array|null, data: Object|null }
    */
   validateIntent(intent) {
-    // Ejecutar validación
+    // Ejecutar validación con AJV
     const valid = this.validate(intent);
 
-    if (valid) {
+    if (!valid) {
+      // Formatear errores de validación
+      const formattedErrors = this._formatErrors(this.validate.errors);
+
       return {
-        valid: true,
-        errors: null,
-        data: intent
+        valid: false,
+        errors: formattedErrors,
+        data: null
       };
     }
 
-    // Formatear errores de validación
-    const formattedErrors = this._formatErrors(this.validate.errors);
+    // Validación adicional: verificar que los campos existan en Datasheet
+    if (intent.fields && intent.fields.length > 0) {
+      const invalidFields = intent.fields.filter(field => !DatasheetColumns.includes(field));
+      
+      if (invalidFields.length > 0) {
+        return {
+          valid: false,
+          errors: [{
+            field: 'fields',
+            message: `Los siguientes campos no existen en Datasheet: ${invalidFields.join(', ')}. Campos válidos: ${DatasheetColumns.join(', ')}`
+          }],
+          data: null
+        };
+      }
+    }
 
     return {
-      valid: false,
-      errors: formattedErrors,
-      data: null
+      valid: true,
+      errors: null,
+      data: intent
     };
   }
 

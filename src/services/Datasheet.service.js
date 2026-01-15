@@ -38,6 +38,28 @@ class DatasheetService {
   async syncDatasheetsFromTemp() {
     return await TransactSQL.singleQuery('DebbugDatasheets');
   }
+
+  /**
+   * Obtener datasheets de un producto por su UNIT
+   * Retorna todas las variantes/SKUs de un producto base
+   * @param {string} unit - UNIT del producto (ej: 'FG-60F', 'FG-100F')
+   * @returns {Promise<Array>} - Array de datasheets del producto
+   */
+  async getDatasheetByUnit(unit) {
+    if (!unit || typeof unit !== 'string' || unit.trim() === '') {
+      throw new Error('El parámetro UNIT es requerido y debe ser una cadena válida');
+    }
+
+    const result = await TransactSQL.singleQuery('GetDatasheetByUnit', [unit.trim()]);
+    
+    // El SP retorna un array de resultados
+    // Si está vacío, significa que no se encontró el producto
+    if (!result || result.length === 0) {
+      return [];
+    }
+
+    return result;
+  }
   
 }
 

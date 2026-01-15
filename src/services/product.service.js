@@ -55,6 +55,46 @@ class ProductService {
   async syncProductosFromTemp() {
     return await TransactSQL.singleQuery('DebbugProductos');
   }
+
+  /**
+   * Obtener productos por UNIT y opcionalmente por SKU
+   * Si SKU es null, retorna todos los productos del UNIT
+   * Si SKU tiene valor, retorna el producto específico
+   * @param {string} unit - UNIT del producto (requerido)
+   * @param {string|null} sku - SKU del producto (opcional)
+   * @returns {Promise<Array>} - Array de productos encontrados
+   */
+  async getProductByUnitAndSku(unit, sku = null) {
+    if (!unit || typeof unit !== 'string' || unit.trim() === '') {
+      throw new Error('El parámetro UNIT es requerido y debe ser una cadena válida');
+    }
+
+    // Normalizar SKU (si viene vacío, convertirlo a null)
+    const normalizedSku = (sku && sku.trim() !== '') ? sku.trim() : null;
+
+    const result = await TransactSQL.listQuery('GetProductByUnitAndSku', [
+      unit.trim(),
+      normalizedSku
+    ]);
+    
+    return result || [];
+  }
+
+  /**
+   * Obtener todos los productos de un UNIT específico
+   * Retorna todas las variantes/SKUs de un producto base
+   * @param {string} unit - UNIT del producto (requerido)
+   * @returns {Promise<Array>} - Array de productos encontrados
+   */
+  async getProductByUnit(unit) {
+    if (!unit || typeof unit !== 'string' || unit.trim() === '') {
+      throw new Error('El parámetro UNIT es requerido y debe ser una cadena válida');
+    }
+
+    const result = await TransactSQL.listQuery('GetProductByUnit', [unit.trim()]);
+    
+    return result || [];
+  }
   
 }
 

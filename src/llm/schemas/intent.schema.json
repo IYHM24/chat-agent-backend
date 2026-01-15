@@ -16,33 +16,27 @@
           "type": ["string", "null"],
           "description": "Marca del producto buscado"
         },
-        "model": {
+        "unit": {
           "type": ["string", "null"],
-          "description": "Modelo del producto buscado"
+          "description": "UNIT del producto base (ej: FortiGate-50G)"
+        },
+        "variant": {
+          "type": ["string", "null"],
+          "description": "SKU de la variante específica (ej: FG-50G-BDL-809-DD)"
         }
       },
-      "required": ["brand", "model"],
+      "required": ["brand", "unit", "variant"],
       "additionalProperties": false,
-      "description": "Filtros para buscar el producto"
+      "description": "Filtros para buscar el producto y su variante"
     },
     "fields": {
       "type": "array",
       "items": {
-        "type": "string",
-        "enum": [
-          "ports",
-          "price",
-          "stock",
-          "description",
-          "brand",
-          "model",
-          "name",
-          "features"
-        ]
+        "type": "string"
       },
       "minItems": 1,
       "uniqueItems": true,
-      "description": "Campos que el usuario quiere conocer del producto"
+      "description": "Nombres exactos de las columnas del modelo Datasheet que el usuario quiere conocer"
     }
   },
   "required": ["entity", "filters", "fields"],

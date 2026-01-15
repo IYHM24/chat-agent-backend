@@ -166,12 +166,17 @@ class OllamaService {
     const rawResponse = await this.generate(prompt, options);
     
     try {
+      // Verificar si la respuesta está vacía
+      if (!rawResponse || rawResponse.trim() === '') {
+        throw new Error('El modelo devolvió una respuesta vacía');
+      }
+
       // Intentar extraer JSON de la respuesta
       // El modelo podría incluir ```json o texto adicional
       const jsonMatch = rawResponse.match(/\{[\s\S]*\}/);
       
       if (!jsonMatch) {
-        throw new Error('No se encontró un objeto JSON válido en la respuesta');
+        throw new Error(`No se encontró un objeto JSON válido en la respuesta. Respuesta: "${rawResponse}"`);
       }
 
       const jsonString = jsonMatch[0];
@@ -197,7 +202,9 @@ class OllamaService {
    * @returns {Promise<Object>} - Intención estructurada (sin validar)
    */
   async extractIntent(userQuestion) {
-    // Cargar el prompt del sistema
+    // Cargar el prompt del sistema (sin cache para desarrollo)
+    this.clearPromptCache(); // Forzar recarga del prompt
+    
     const systemPrompt = await this.loadPrompt(
       'intent-extraction',
       config.paths.intentPromptVersion
@@ -206,8 +213,11 @@ class OllamaService {
     // Combinar prompt del sistema con pregunta del usuario
     const fullPrompt = `${systemPrompt}\n\n${userQuestion}`;
 
-    // Obtener respuesta JSON del modelo
-    const intentJson = await this.generateJSON(fullPrompt);
+    // Obtener respuesta JSON del modelo con opciones optimizadas
+    const intentJson = await this.generateJSON(fullPrompt, {
+      num_predict: 100, // Limitar aún más para respuestas rápidas
+      temperature: 0.05 // Más determinista = más rápido
+    });
 
     return intentJson;
   }
