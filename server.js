@@ -25,19 +25,21 @@ const startServer = async () => {
     //Pre calentar LLMs u otros servicios si es necesario
     // await prewarmServices();
     
-    // Iniciar el servidor
-    const server = app.listen(PORT, () => {
+    // Iniciar el servidor en todas las interfaces de red (0.0.0.0)
+    // Esto permite conexiones desde otros dispositivos en la red local
+    const server = app.listen(PORT, '0.0.0.0', () => {
       logger.info(`
-╔════════════════════════════════════════════════════════════════╗
-║                                                       
-║   🚀 Servidor iniciado exitosamente                  
-║                                                       
-║   📡 Puerto: ${PORT}                                 
-║   🌍 Entorno: ${config.nodeEnv}                      
-║   📅 Fecha: ${new Date().toLocaleString()}            
-║                                                       
-║   🔗 Health: http://localhost:${PORT}/health                      
-║   📚 API: http://localhost:${PORT}/api/${config.api.version}    
+╭────────────────────────────────────────────────────────────────╮
+│                                                       
+│   🚀 Servidor iniciado exitosamente                  
+│                                                       
+│   📡 Puerto: ${PORT}                                 
+│   🌍 Entorno: ${config.nodeEnv}                      
+│   📅 Fecha: ${new Date().toLocaleString()}            
+│                                                       
+│   🔗 Local:   http://localhost:${PORT}/health                      
+│   🌐 Red:     http://192.168.2.9:${PORT}/health                   
+│   📚 API:     http://localhost:${PORT}/api/${config.api.version}    
 ║                                                                   
 ╚════════════════════════════════════════════════════════════════╝
   `);

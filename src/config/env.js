@@ -26,7 +26,9 @@ export default {
   
   // CORS
   cors: {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: process.env.CORS_ORIGIN 
+      ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+      : ['http://localhost:3000'],
   },
   
   // API
@@ -50,7 +52,7 @@ export default {
     openrouter: {
       apiKey: process.env.OPENROUTER_API_KEY,
       baseUrl: process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1',
-      model: process.env.OPENROUTER_MODEL || 'anthropic/claude-3-sonnet',
+      model: process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.3-70b-instruct:free',
       timeout: process.env.OPENROUTER_TIMEOUT || '60000',
       siteUrl: process.env.OPENROUTER_SITE_URL,
       appName: process.env.OPENROUTER_APP_NAME,
