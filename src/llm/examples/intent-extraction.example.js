@@ -10,7 +10,7 @@
  * Ejecutar con: node src/llm/examples/intent-extraction.example.js
  */
 
-import ollamaService from '../../services/ollama.service.js';
+import llmService from '../../services/llm.service.js';
 import intentValidator from '../validators/intent.validator.js';
 
 /**
@@ -26,8 +26,8 @@ async function extractAndValidateIntent(userQuestion) {
 
   try {
     // Paso 1: Extraer intención usando el LLM
-    console.log('[1/3] Enviando pregunta a Ollama (modelo: phi3)...');
-    const rawIntent = await ollamaService.extractIntentWithRetry(userQuestion);
+    console.log('[1/3] Enviando pregunta al LLM (auto-detectado)...');
+    const rawIntent = await llmService.extractIntentWithRetry(userQuestion);
     
     console.log('[1/3] ✓ Respuesta recibida del LLM:');
     console.log(JSON.stringify(rawIntent, null, 2));
@@ -97,7 +97,7 @@ async function runExamples() {
  */
 async function processUserQuestion(userQuestion) {
   // Extraer intención del LLM
-  const rawIntent = await ollamaService.extractIntentWithRetry(userQuestion);
+  const rawIntent = await llmService.extractIntentWithRetry(userQuestion);
   
   // Validar la intención
   const validatedIntent = intentValidator.validateOrThrow(rawIntent);

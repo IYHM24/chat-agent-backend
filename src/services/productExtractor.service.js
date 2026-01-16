@@ -9,7 +9,7 @@
 
 import  Product from '../models/Product.model.js';
 import { Op } from 'sequelize';
-import ollamaService from './ollama.service.js';
+import llmService from './llm.service.js';
 import intentValidator from '../llm/validators/intent.validator.js';
 import { DatasheetColumns } from '../config/columnasAgente.js';
 import { logger } from '../config/logger.js';
@@ -224,14 +224,14 @@ class ProductExtractor {
 
   /**
    * MÉTODO 3: Extracción con LLM (LENTO pero INTELIGENTE)
-   * Usa Ollama para análisis semántico
+   * Usa el servicio LLM (Ollama o OpenRouter) para análisis semántico
    * 
    * @param {string} message - Mensaje del usuario
    * @returns {Promise<Object|null>} - { brand, unit, variant, fields } o null
    */
   async extractByLLM(message) {
     try {
-      const rawIntent = await ollamaService.extractIntentWithRetry(message);
+      const rawIntent = await llmService.extractIntentWithRetry(message);
       const validatedIntent = intentValidator.validateOrThrow(rawIntent);
       
       logger.info('✓ Método 3 (LLM): Intención extraída', validatedIntent.filters);

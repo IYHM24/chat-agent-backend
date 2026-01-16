@@ -12,6 +12,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default {
+  // Selección automática del proveedor LLM
+  // 'auto': detecta automáticamente (OpenRouter si hay API key, sino Ollama)
+  // 'ollama': fuerza uso de Ollama
+  // 'openrouter': fuerza uso de OpenRouter
+  provider: process.env.LLM_PROVIDER || 'auto',
+
   // Configuración de Ollama
   ollama: {
     // URL base del servidor Ollama (puede ser local o remoto)
@@ -37,6 +43,35 @@ export default {
       
       // Stop tokens: detener generación al encontrar estos tokens
       stop: ['\n\n', '```', '}']  // Agregado } para detener después del JSON
+    }
+  },
+
+  // Configuración de OpenRouter (compatible con API de OpenAI)
+  openrouter: {
+    // API Key de OpenRouter (requerido para usar este proveedor)
+    apiKey: process.env.OPENROUTER_API_KEY,
+    
+    // URL base de la API (permite usar otras APIs compatibles)
+    baseUrl: process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1',
+    
+    // Modelo a utilizar
+    // Ver modelos disponibles: https://openrouter.ai/models
+    // Ejemplos: anthropic/claude-3-sonnet, openai/gpt-4, meta-llama/llama-3-70b
+    model: process.env.OPENROUTER_MODEL || 'anthropic/claude-3-sonnet',
+    
+    // Timeout para las peticiones (en milisegundos)
+    timeout: parseInt(process.env.OPENROUTER_TIMEOUT) || 60000,
+    
+    // Headers opcionales para OpenRouter
+    siteUrl: process.env.OPENROUTER_SITE_URL,
+    appName: process.env.OPENROUTER_APP_NAME,
+    
+    // Parámetros de generación (compatibles con API de OpenAI)
+    options: {
+      temperature: 0.1,
+      top_p: 0.9,
+      max_tokens: 150,
+      stop: ['\n\n', '```', '}']
     }
   },
 

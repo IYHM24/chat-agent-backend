@@ -7,7 +7,7 @@ import ProductService from '../services/product.service.js';
 import DatasheetService from '../services/Datasheet.service.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import ApiResponse from '../utils/ApiResponse.js';
-import ollamaService from '../services/ollama.service.js';
+import llmService from '../services/llm.service.js';
 
 /**
  * @desc    Insertar productos masivamente
@@ -43,7 +43,7 @@ const askAgent = asyncHandler(async (req, res) => {
 
   }
 
-  const agentAnswer = await ollamaService.generateMessages(Messages);
+  const agentAnswer = await llmService.generateMessages(Messages);
 
   const responseData = [
     ...Messages,

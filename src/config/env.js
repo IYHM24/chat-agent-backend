@@ -33,4 +33,27 @@ export default {
   api: {
     version: process.env.API_VERSION || 'v1',
   },
+
+  // LLM Configuration
+  llm: {
+    // Provider selection: 'auto', 'ollama', or 'openrouter'
+    provider: process.env.LLM_PROVIDER || 'auto',
+    
+    // Ollama configuration
+    ollama: {
+      baseUrl: process.env.OLLAMA_BASE_URL || 'http://localhost:11434',
+      model: process.env.OLLAMA_MODEL || 'phi3',
+      timeout: process.env.OLLAMA_TIMEOUT || '3600000',
+    },
+    
+    // OpenRouter configuration
+    openrouter: {
+      apiKey: process.env.OPENROUTER_API_KEY,
+      baseUrl: process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1',
+      model: process.env.OPENROUTER_MODEL || 'anthropic/claude-3-sonnet',
+      timeout: process.env.OPENROUTER_TIMEOUT || '60000',
+      siteUrl: process.env.OPENROUTER_SITE_URL,
+      appName: process.env.OPENROUTER_APP_NAME,
+    },
+  },
 };
