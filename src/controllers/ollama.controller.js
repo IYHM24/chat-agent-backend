@@ -29,7 +29,6 @@ const askAgent = asyncHandler(async (req, res) => {
       await ProductService.getProductByUnitAndSku(productos.unit, productos.variant);
 
     // Seleccionar el producto con el ID menor si hay múltiples variantes
-    let productoSeleccionado = null;
     if (productosObtenidos && datasheet) {
       // Si se detectó un producto, agregar contexto al mensaje del agente
       Messages.push({

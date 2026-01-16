@@ -59,7 +59,7 @@ export function extractProductIntent(options = {}) {
           entity: 'product',
           filters: {
             brand: extractedData.brand,
-            unit: extractedData.unit,
+            unit: extractedData.unit || "No identificado",
             variant: extractedData.variant
           },
           fields: extractedData.fields || [],
@@ -70,7 +70,7 @@ export function extractProductIntent(options = {}) {
         // Agregar parámetro search al body con toda la información extraída
         req.productos = {
           brand: extractedData.brand,
-          unit: extractedData.unit,
+          unit: extractedData.unit || "No identificado",
           variant: extractedData.variant,
           fields: extractedData.fields || [],
           method: extractedData.method,
@@ -81,7 +81,7 @@ export function extractProductIntent(options = {}) {
         const elapsed = Date.now() - startTime;
         logger.info(`✓ Producto extraído en ${elapsed}ms usando ${extractedData.method}:`, {
           brand: extractedData.brand,
-          unit: extractedData.unit,
+          unit: extractedData.unit || "No identificado",
           variant: extractedData.variant,
           fields: extractedData.fields
         });
