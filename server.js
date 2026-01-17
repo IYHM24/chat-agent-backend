@@ -29,20 +29,20 @@ const startServer = async () => {
     // Esto permite conexiones desde otros dispositivos en la red local
     const server = app.listen(PORT, '0.0.0.0', () => {
       logger.info(`
-╭────────────────────────────────────────────────────────────────╮
-│                                                       
-│   🚀 Servidor iniciado exitosamente                  
-│                                                       
-│   📡 Puerto: ${PORT}                                 
-│   🌍 Entorno: ${config.nodeEnv}                      
-│   📅 Fecha: ${new Date().toLocaleString()}            
-│                                                       
-│   🔗 Local:   http://localhost:${PORT}/health                      
-│   🌐 Red:     http://192.168.2.9:${PORT}/health                   
-│   📚 API:     http://localhost:${PORT}/api/${config.api.version}    
-║                                                                   
-╚════════════════════════════════════════════════════════════════╝
-  `);
+        ╭────────────────────────────────────────────────────────────────╮
+        │                                                       
+        │   🚀 Servidor iniciado exitosamente                  
+        │                                                       
+        │   📡 Puerto: ${PORT}                                 
+        │   🌍 Entorno: ${config.nodeEnv}                      
+        │   📅 Fecha: ${new Date().toLocaleString()}            
+        │                                                       
+        │   🔗 Local:   http://localhost:${PORT}/health                      
+        │   🌐 Red:     http://192.168.2.9:${PORT}/health                   
+        │   📚 API:     http://localhost:${PORT}/api/${config.api.version}    
+        ║                                                                   
+        ╚════════════════════════════════════════════════════════════════╝
+      `);
     });
 
     // Manejo de errores no capturados
@@ -64,6 +64,7 @@ const startServer = async () => {
         process.exit(0);
       });
     });
+    
   } catch (error) {
     logger.error('Error al iniciar el servidor:', error);
     process.exit(1);

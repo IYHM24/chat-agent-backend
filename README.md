@@ -7,12 +7,16 @@ Backend desarrollado con Node.js, Express.js y MySQL siguiendo las mejores prác
 ```
 Backend/
 ├── src/
-│   ├── config/          # Configuraciones (DB, env, logger)
+│   ├── config/          # Configuraciones (DB, env, logger, LLM)
 │   │   ├── database.js  # Configuración de Sequelize + MySQL
 │   │   ├── env.js       # Variables de entorno
-│   │   └── logger.js    # Winston logger
+│   │   ├── logger.js    # Winston logger
+│   │   ├── llm.config.js # Configuración LLM (Ollama/OpenRouter)
+│   │   └── columnasAgente.js
 │   ├── controllers/     # Controladores de rutas
 │   │   ├── auth.controller.js
+│   │   ├── datasheet.controller.js
+│   │   ├── ollama.controller.js  # Agente conversacional
 │   │   ├── product.controller.js
 │   │   └── user.controller.js
 │   ├── middlewares/     # Middlewares personalizados
@@ -25,8 +29,22 @@ Backend/
 │   │   ├── Product.model.js
 │   │   └── ProductTemp.model.js
 │   ├── routes/          # Definición de rutas
+│   ├── llm/             # Módulo de Language Models
+│   │   ├── prompts/     # Prompts versionados
+│   │   ├── schemas/     # JSON Schemas de validación
+│   │   ├── validators/  # Validadores AJV
+│   │   ├── examples/    # Ejemplos de uso
+│   │   └── index.js     # Punto de entrada
 │   ├── services/        # Lógica de negocio
+│   │   ├── llm/         # Adapters para proveedores LLM
+│   │   │   ├── OllamaAdapter.js    # Adapter Ollama local
+│   │   │   └── OpenRouterAdapter.js # Adapter OpenRouter cloud
+│   │   ├── llm.service.js    # Servicio LLM unificado (auto-detección)
+│   │   ├── ollama.service.js # Servicio Ollama legacy
+│   │   ├── productExtractor.service.js # Extracción inteligente
 │   │   ├── user.service.js
+│   │   ├── product.service.js
+│   │   ├── Datasheet.service.js
 │   │   └── TransactSQL.js  # Servicio para SPs (estilo Dapper)
 │   ├── utils/           # Utilidades y helpers
 │   │   ├── database.utils.js
@@ -100,16 +118,41 @@ DB_DIALECT=mysql
 JWT_SECRET=tu-clave-secreta-super-segura
 JWT_EXPIRE=7d
 
-# CORS
-CORS_ORIGIN=http://localhost:3000
+# CORS - Múltiples orígenes separados por comas
+CORS_ORIGIN=http://localhost:3000,http://127.0.0.1:5500,http://192.168.x.x:5500
 
 # API
 API_VERSION=v1
+
+# LLM Provider (auto, ollama, openrouter)
+LLM_PROVIDER=auto
+
+# Ollama (local)
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=phi3
+OLLAMA_TIMEOUT=3600000
+
+# OpenRouter (cloud) - opcional
+# OPENROUTER_API_KEY=sk-or-v1-...
+OPENROUTER_MODEL=anthropic/claude-3-sonnet
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
 ```
 
-**Importante:** Genera un `JWT_SECRET` seguro:
+**Importante:** 
+
+1. Genera un `JWT_SECRET` seguro:
 ```bash
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+2. **CORS para red local:** Si quieres acceder desde otros dispositivos en tu red:
+```env
+CORS_ORIGIN=http://localhost:3000,http://192.168.2.9:5500
+```
+
+3. **Sistema LLM Híbrido:** Usa Ollama (local) por defecto. Para OpenRouter, configura:
+```env
+OPENROUTER_API_KEY=sk-or-v1-tu-clave-aqui
 ```
 
 ## 📚 Endpoints Principales
@@ -134,6 +177,9 @@ node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 - `POST /api/v1/products` - Crear producto
 - `PUT /api/v1/products/:id` - Actualizar producto
 - `DELETE /api/v1/products/:id` - Eliminar producto
+
+### Agente Conversacional (LLM)
+- `POST /api/v1/agent/ask` - Chat con agente inteligente
 
 ### Health Check
 - `GET /health` - Verificar estado del servidor
@@ -296,6 +342,8 @@ Similar a Product, para datos temporales de importación.
 - **helmet** - Seguridad HTTP
 - **cors** - Control de acceso
 - **dotenv** - Variables de entorno
+- **openai** - SDK para OpenRouter/OpenAI
+- **ollama** - SDK para Ollama local
 
 ## 📄 Licencia
 

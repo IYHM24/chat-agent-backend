@@ -1,9 +1,18 @@
 ````markdown
-# 🚀 Guía Rápida - Módulo LLM
+# 🚀 Guía Rápida - Módulo LLM Híbrido
+
+## Selección de Proveedor
+
+El sistema **detecta automáticamente** qué proveedor usar:
+
+- 🏠 **Ollama** (local, gratis) - Por defecto
+- ☁️ **OpenRouter** (cloud, pago) - Si configuras API key
 
 ## Instalación y Setup
 
-### 1. Instalar Ollama
+### Opción A: Ollama (Recomendado para desarrollo)
+
+#### 1. Instalar Ollama
 ```bash
 # Windows: Descargar desde https://ollama.ai/download
 # Linux/Mac:
@@ -24,6 +33,26 @@ ollama list
 ### 4. Iniciar Ollama (si no está corriendo)
 ```bash
 ollama serve
+```
+
+### Opción B: OpenRouter (Recomendado para producción)
+
+#### 1. Obtener API Key
+```bash
+# Registrarse en https://openrouter.ai
+# Obtener clave en https://openrouter.ai/keys
+```
+
+#### 2. Configurar en .env
+```bash
+OPENROUTER_API_KEY=sk-or-v1-tu-clave-aqui
+OPENROUTER_MODEL=anthropic/claude-3-sonnet
+```
+
+#### 3. El sistema cambiará automáticamente a OpenRouter
+```bash
+# Logs al iniciar:
+# 🤖 LLM Provider: OpenRouter (anthropic/claude-3-sonnet) - OPENROUTER_API_KEY configured
 ```
 
 ## Uso Rápido
@@ -94,9 +123,15 @@ async function handleUserQuestion(req, res) {
 ### Error: "fetch failed" o "ECONNREFUSED"
 - ✓ Verifica que Ollama esté corriendo: `ollama list`
 - ✓ Inicia Ollama si es necesario: `ollama serve`
+- ✓ O configura OpenRouter como fallback
 
 ### Error: "model not found"
 - ✓ Descarga el modelo: `ollama pull phi3`
+- ✓ O cambia a OpenRouter configurando API key
+
+### Error: "No LLM provider available"
+- ✓ Inicia Ollama: `ollama serve`
+- ✓ O configura `OPENROUTER_API_KEY` en `.env`
 
 ### Respuestas inválidas del modelo
 - ✓ El módulo reintenta automáticamente 3 veces
@@ -118,17 +153,24 @@ async function handleUserQuestion(req, res) {
 ## Variables de entorno (.env)
 
 ```bash
-# Obligatorias (con valores por defecto)
+# Proveedor (auto detecta si no se especifica)
+LLM_PROVIDER=auto
+
+# Ollama (local)
 OLLAMA_BASE_URL=http://localhost:11434
 OLLAMA_MODEL=phi3
-OLLAMA_TIMEOUT=30000
+OLLAMA_TIMEOUT=3600000
+
+# OpenRouter (cloud)
+OPENROUTER_API_KEY=sk-or-v1-...  # Descomenta para activar
+OPENROUTER_MODEL=anthropic/claude-3-sonnet
 ```
 
 ## Cambiar de modelo
 
+### Ollama
 En `.env`:
 ```bash
-# Usar llama2 en lugar de phi3
 OLLAMA_MODEL=llama2
 ```
 
@@ -136,6 +178,16 @@ Descargar el nuevo modelo:
 ```bash
 ollama pull llama2
 ```
+
+### OpenRouter
+En `.env`:
+```bash
+OPENROUTER_MODEL=openai/gpt-4-turbo
+# o
+OPENROUTER_MODEL=meta-llama/llama-3-70b
+```
+
+Ver modelos disponibles: https://openrouter.ai/models
 
 ## Próximos pasos
 

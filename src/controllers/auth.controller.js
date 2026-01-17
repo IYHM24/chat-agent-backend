@@ -14,7 +14,7 @@ import bcrypt from 'bcryptjs';
  */
 const register = asyncHandler(async (req, res) => {
   const { Usuario, Credencial } = req.body;
-  debugger;
+
   // Crear usuario usando SP
   const hashedPassword = await bcrypt.hash(Credencial, 10);
   const result = await userService.createUser({Usuario, Credencial: hashedPassword});

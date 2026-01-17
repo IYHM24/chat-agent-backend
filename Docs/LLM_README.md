@@ -1,16 +1,26 @@
 ````markdown
 # Módulo LLM - Extracción de Intenciones
 
-Módulo para integración con Ollama (Phi-3) que convierte preguntas de usuarios en intenciones estructuradas y validadas.
+Módulo híbrido para integración con **Ollama (local)** o **OpenRouter (cloud)** que convierte preguntas de usuarios en intenciones estructuradas y validadas.
+
+## 🌐 Proveedores Soportados
+
+- **Ollama** (por defecto) - Modelos locales: Phi-3, Llama, Mistral, etc.
+- **OpenRouter** - Acceso a GPT-4, Claude, Gemini y más
+- **Auto-detección** - Cambia automáticamente según configuración
 
 ## 📁 Estructura
 
 ```
 src/
 ├── config/
-│   └── llm.config.js              # Configuración centralizada (movido aquí)
+│   └── llm.config.js              # Configuración centralizada (Ollama + OpenRouter)
 ├── services/
-│   └── ollama.service.js          # Servicio de comunicación con Ollama (movido aquí)
+│   ├── llm.service.js             # Servicio unificado con auto-detección
+│   ├── ollama.service.js          # Servicio Ollama (legacy)
+│   └── llm/
+│       ├── OllamaAdapter.js       # Adapter para Ollama local
+│       └── OpenRouterAdapter.js   # Adapter para OpenRouter cloud
 └── llm/
     ├── prompts/
     │   └── intent-extraction.v1.prompt.txt  # Prompt versionado
@@ -70,13 +80,14 @@ console.log(intent);
 ### Avanzado
 
 ```javascript
-import ollamaService from './services/ollama.service.js';
+import llmService from './services/llm.service.js';
 import intentValidator from './llm/validators/intent.validator.js';
 
 async function processQuestion(userQuestion) {
   try {
     // Extraer intención (con reintentos automáticos)
-    const rawIntent = await ollamaService.extractIntentWithRetry(userQuestion);
+    // Usa Ollama o OpenRouter automáticamente
+    const rawIntent = await llmService.extractIntentWithRetry(userQuestion);
     
     // Validar con JSON Schema
     const validatedIntent = intentValidator.validateOrThrow(rawIntent);
@@ -94,15 +105,26 @@ async function processQuestion(userQuestion) {
 ### Variables de entorno (.env)
 
 ```bash
-# URL del servidor Ollama
+# Selección de proveedor: auto, ollama, openrouter
+LLM_PROVIDER=auto
+
+# Ollama (local)
 OLLAMA_BASE_URL=http://localhost:11434
-
-# Modelo a utilizar
 OLLAMA_MODEL=phi3
+OLLAMA_TIMEOUT=3600000
 
-# Timeout (milisegundos)
-OLLAMA_TIMEOUT=30000
+# OpenRouter (cloud) - opcional
+OPENROUTER_API_KEY=sk-or-v1-tu-clave
+OPENROUTER_MODEL=anthropic/claude-3-sonnet
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
 ```
+
+### Lógica de Auto-Detección
+
+1. **Si `OPENROUTER_API_KEY` existe** → Usa OpenRouter
+2. **Si Ollama disponible** (health check) → Usa Ollama
+3. **Si Ollama falla y hay API key** → Fallback a OpenRouter
+4. **Si nada funciona** → Error claro
 
 ### Cambiar modelo LLM
 
@@ -119,6 +141,8 @@ export default {
 
 ## 📋 Prerequisitos
 
+### Opción 1: Ollama (Local - Gratis)
+
 1. **Ollama instalado y ejecutándose**
    ```bash
    # Instalar Ollama
@@ -130,6 +154,18 @@ export default {
    # Verificar que esté corriendo
    ollama list
    ```
+
+### Opción 2: OpenRouter (Cloud - Pago)
+
+1. **Obtener API key**
+   - Registrarse en https://openrouter.ai
+   - Obtener clave en https://openrouter.ai/keys
+   - Configurar en `.env`:
+   ```bash
+   OPENROUTER_API_KEY=sk-or-v1-...
+   ```
+
+### Dependencias
 
 2. **Dependencias instaladas**
    ```bash
